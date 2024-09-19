@@ -1,3 +1,7 @@
+Plugin that will change names of tabs for Simplifier
+Not yet full.
+Will change tabs to format "TYPE FUNCTION_NAME BO_NAME INSTANCE" or similar
+
 To install:
 
 1. Download code
