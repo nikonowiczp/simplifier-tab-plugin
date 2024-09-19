@@ -1,0 +1,1 @@
+This plugin does not collect any user data
