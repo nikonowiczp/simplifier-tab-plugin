@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Tab Title Changer",
+    "name": "Simplifier Tab Title Changer",
     "version": "1.0",
     "description": "Changes tab titles based on URL patterns.",
     "permissions": ["tabs"],
@@ -14,7 +14,6 @@
       }
     ],
     "action": {
-      "default_popup": "popup.html",
-      "default_icon": "icon.png"
+      "default_popup": "popup.html"
     }
   }
