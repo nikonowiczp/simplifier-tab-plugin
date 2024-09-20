@@ -1,4 +1,4 @@
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete') {
         const url = new URL(tab.url);
 
@@ -6,13 +6,18 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
         if (url.pathname.includes('/UserInterface/')) {
             var instance = url.hostname.split('.')[0]; // Extract INSTANCE from hostname
 
-            let data = await chrome.storage.sync.get(['rules']);
-            if(data.rules) {
+            let data = await chrome.storage.sync.get(['rules','onlyUseWithRules','hideObjectType']);
+            const onlyUseWithRules = data.onlyUseWithRules || false;
+            const hideObjectType = data.hideObjectType || false;
+            if (data.rules) {
                 let rule = data.rules.find(rule => rule.hostname === url.hostname)
-                if(rule) {
+                if (rule) {
                     instance = rule.instanceName;
+                } else if (onlyUseWithRules) {
+                    return;
                 }
             }
+            var newTitle = "";
             let sName = "";
             let sFuncName = "";
 
@@ -25,9 +30,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
             if (url.hash.startsWith('#/ClientBusinessObject')) {
                 sName = hashParts[2];
                 sFuncName = hashParts[5];
-
-
-                var newTitle = `CSBO `;
+                if (!hideObjectType) newTitle += `CSBO `;
                 if (sFuncName) {
                     newTitle += `${sFuncName} `;
                 }
@@ -35,15 +38,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
-
             } else if (url.hash.startsWith('#/BusinessObject/client')) {
                 sName = hashParts[3];
                 sFuncName = hashParts[6];
 
 
-                var newTitle = `CSBO `;
+                if (!hideObjectType) newTitle += `CSBO `;
                 if (sFuncName) {
                     newTitle += `${sFuncName} `;
                 }
@@ -51,15 +51,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/BusinessObject')) {
                 sName = hashParts[2];
                 if (sName === "server") sName = hashParts[3];
                 sFuncName = hashParts[5];
 
 
-                var newTitle = `BO `;
+                if (!hideObjectType) newTitle += `BO `;
                 if (sFuncName) {
                     newTitle += `${sFuncName} `;
                 }
@@ -67,14 +65,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/Connector')) {
                 sName = hashParts[3]
                 sFuncName = hashParts[6];
 
 
-                var newTitle = `CON `;
+                if (!hideObjectType) newTitle += `CON `;
                 if (sFuncName) {
                     newTitle += `${sFuncName} `;
                 }
@@ -82,54 +78,43 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) =>  {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/ApplicationEditor')) {
                 sName = hashParts[2]
 
-                var newTitle = `APP `;
+                if (!hideObjectType) newTitle += `APP `;
                 if (sName) {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/Project/ProjectDetails')) {
                 sName = hashParts[4]
 
-                var newTitle = `PRO `;
+                if (!hideObjectType) newTitle += `PRO `;
                 if (sName) {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/DbDesigner/SchemaDetails')) {
                 sName = hashParts[4]
 
-                var newTitle = `DB `;
+                if (!hideObjectType) newTitle += `DB `;
                 if (sName) {
                     newTitle += `${sName} `;
                 }
                 newTitle += `${instance}`;
-                // Send a message to content script to change the title
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/Logging/Monitoring')) {
-                var newTitle = `Monitoring `;
+                if (!hideObjectType) newTitle += `Monitoring `;
                 newTitle += `${instance}`;
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/Logging/AuditLog')) {
-                var newTitle = `Logs `;
+                if (!hideObjectType) newTitle += `Logs `;
                 newTitle += `${instance}`;
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else if (url.hash.startsWith('#/Logging/Statistic')) {
-                var newTitle = `Stats `;
+                if (!hideObjectType) newTitle = `Stats `;
                 newTitle += `${instance}`;
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             } else {
                 newTitle = `${instance}`;
-                chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
             }
+            chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
         }
     }
 }
