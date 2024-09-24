@@ -34,7 +34,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/BusinessObject/client')) {
                 sName = hashParts[3];
                 sFuncName = hashParts[6];
@@ -47,7 +46,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/BusinessObject')) {
                 sName = hashParts[2];
                 if (sName === "server") sName = hashParts[3];
@@ -61,7 +59,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/Connector')) {
                 sName = hashParts[3]
                 sFuncName = hashParts[6];
@@ -74,7 +71,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/ApplicationEditor')) {
                 sName = hashParts[2]
 
@@ -82,7 +78,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/Project/ProjectDetails')) {
                 sName = hashParts[4]
 
@@ -90,7 +85,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/DbDesigner/SchemaDetails')) {
                 sName = hashParts[4]
 
@@ -98,19 +92,59 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (sName) {
                     newTitle += `${sName} `;
                 }
-                newTitle += `${instance}`;
+            }else if(url.hash.startsWith('#/DbDesigner/DataEditor')){
+                sName = hashParts[3]
+                if (!hideObjectType) newTitle += `DB-EDIT `;
+                if (sName) {
+                    newTitle += `${sName} `;
+                }
+            } else if (url.hash.startsWith('#/DataType/domain')) {
+                if (!hideObjectType) newTitle += `Domain Data Types `;
+            } else if (url.hash.startsWith('#/DomainType')) {
+                sName = hashParts[3];
+                if (!hideObjectType) newTitle += `DMT `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/DataType/struct')) {
+                if (!hideObjectType) newTitle += `Struct Data Types `;
+            } else if (url.hash.startsWith('#/Struct/')) {
+                sName = hashParts[3];
+                if (!hideObjectType) newTitle += `STR `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/DataType/collection')) {
+                if (!hideObjectType) newTitle += `Collection Data Types `;
+            } else if (url.hash.startsWith('#/Collection/')) {
+                sName = hashParts[3];
+                if (!hideObjectType) newTitle += `COL `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/Template')) {
+                if (!hideObjectType) newTitle += `Templates `;
+            } else if (url.hash.startsWith('#/TemplateDetails')) {
+                sName = hashParts[3];
+                sFuncName = hashParts[4];
+                if (!hideObjectType) newTitle += `TMP `;
+                if(sFuncName) newTitle += `${sFuncName} `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/DbDesigner/DeployLog')) {
+                if (!hideObjectType) newTitle += `Deploy Log `;
             } else if (url.hash.startsWith('#/Logging/Monitoring')) {
                 if (!hideObjectType) newTitle += `Monitoring `;
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/Logging/AuditLog')) {
                 if (!hideObjectType) newTitle += `Logs `;
-                newTitle += `${instance}`;
             } else if (url.hash.startsWith('#/Logging/Statistic')) {
                 if (!hideObjectType) newTitle = `Stats `;
-                newTitle += `${instance}`;
-            } else {
-                newTitle += `${instance}`;
-            }
+            } else if (url.hash.startsWith('#/Transport/Collection')) {
+                sName = hashParts[4];
+                if (!hideObjectType) newTitle = `PKG `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/Transport/Request')) {
+                sName = hashParts[4];
+                if (!hideObjectType) newTitle = `TP `;
+                if(sName) newTitle += `${sName} `;
+            } else if (url.hash.startsWith('#/Transport/Import')) {
+                if (!hideObjectType) newTitle = `Import `;
+            } 
+            newTitle += `${instance}`;
+
             chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
         }
     }
