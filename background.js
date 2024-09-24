@@ -1,15 +1,13 @@
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete') {
+    if (changeInfo.status === 'complete' || changeInfo.title === 'Simplifier') {
         const url = new URL(tab.url);
-
-        // Check if the URL matches the required structure
-        if (url.pathname.includes('/UserInterface/')) {
-            var instance = url.hostname.split('.')[0]; // Extract INSTANCE from hostname
+        if (url?.pathname.startsWith('/UserInterface/')) {
+            var instance = url.hostname.split('.')[0];
 
             let data = await chrome.storage.sync.get(['rules','onlyUseWithRules','hideObjectType']);
-            const onlyUseWithRules = data.onlyUseWithRules || false;
-            const hideObjectType = data.hideObjectType || false;
-            if (data.rules) {
+            const onlyUseWithRules = data?.onlyUseWithRules ?? false;
+            const hideObjectType = data?.hideObjectType ?? false;
+            if (data?.rules) {
                 let rule = data.rules.find(rule => rule.hostname === url.hostname)
                 if (rule) {
                     instance = rule.instanceName;
@@ -17,15 +15,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     return;
                 }
             }
-            var newTitle = "";
+            let newTitle = "";
             let sName = "";
             let sFuncName = "";
 
             const hashParts = url.hash.split('/');
 
-
             if (instance === "aws") {
-                instance = url.hostname.split('.')[1]; // Special case for Siemens
+                instance = url.hostname.split('.')[1];
             }
             if (url.hash.startsWith('#/ClientBusinessObject')) {
                 sName = hashParts[2];
@@ -112,7 +109,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 if (!hideObjectType) newTitle = `Stats `;
                 newTitle += `${instance}`;
             } else {
-                newTitle = `${instance}`;
+                newTitle += `${instance}`;
             }
             chrome.tabs.sendMessage(tabId, { action: "changeTitle", newTitle: newTitle });
         }
